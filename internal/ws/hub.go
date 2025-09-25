@@ -3,6 +3,7 @@ package ws
 import (
 	"encoding/json"
 	"fmt"
+	"onlineChat/pkg/config"
 	"sync"
 	"time"
 
@@ -22,7 +23,7 @@ type Hub struct {
 	mu         sync.RWMutex
 }
 
-func NewHub(redisCfg redis.RedisConfig, service ChatService, logger *logrus.Logger) *Hub {
+func NewHub(redisCfg config.RedisConfig, service ChatService, logger *logrus.Logger) *Hub {
 	return &Hub{
 		chats:      make(map[int]map[int]*Client),
 		broadcast:  make(chan *Message),

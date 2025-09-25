@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"onlineChat/pkg/config"
 )
 
 type PostgresConfig struct {
@@ -15,7 +16,7 @@ type PostgresConfig struct {
 	SSLMode  string
 }
 
-func Open(cfg PostgresConfig) (*sql.DB, error) {
+func Open(cfg config.DatabaseConfig) (*sql.DB, error) {
 	db, err := sql.Open("pgx", fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.Username, cfg.Password, cfg.DBName, cfg.SSLMode))
 

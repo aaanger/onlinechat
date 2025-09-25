@@ -9,7 +9,6 @@ import (
 	"onlineChat/internal/ws"
 	"onlineChat/pkg/config"
 	"onlineChat/pkg/db"
-	"onlineChat/pkg/redis"
 	"os"
 	"os/signal"
 	"syscall"
@@ -53,7 +52,7 @@ func (srv *Server) Shutdown() {
 
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Printf("Warning: .env file not found: %v", err)
+		log.Fatalf(".env file not found: %v", err)
 	}
 
 	cfg, err := config.Load()
@@ -66,14 +65,7 @@ func main() {
 
 	gin.SetMode(cfg.Server.Mode)
 
-	database, err := db.Open(db.PostgresConfig{
-		Host:     cfg.Database.Host,
-		Port:     cfg.Database.Port,
-		Username: cfg.Database.Username,
-		Password: cfg.Database.Password,
-		DBName:   cfg.Database.DBName,
-		SSLMode:  cfg.Database.SSLMode,
-	})
+	database, err := db.Open(cfg.Database)
 	if err != nil {
 		logger.WithError(err).Fatal("Failed to connect to database")
 	}
@@ -83,12 +75,6 @@ func main() {
 		logger.WithError(err).Fatal("Failed to ping database")
 	}
 	logger.Info("Database connection established")
-
-	redisCfg := redis.RedisConfig{
-		Address:  cfg.Redis.Address,
-		Password: cfg.Redis.Password,
-		DB:       cfg.Redis.DB,
-	}
 
 	userRepo := users.NewUserRepository(database, logger)
 	chatRepo := ws.NewChatRepository(database, logger)
@@ -102,7 +88,7 @@ func main() {
 
 	chatService := ws.NewChatService(chatRepo, logger)
 
-	hub := ws.NewHub(redisCfg, chatService, logger)
+	hub := ws.NewHub(cfg.Redis, chatService, logger)
 	go hub.Run()
 
 	userHandler := users.NewUserHandler(userService, logger)
