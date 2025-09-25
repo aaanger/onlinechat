@@ -2,8 +2,6 @@ package ws
 
 import (
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 type Chat struct {
@@ -33,17 +31,6 @@ type Message struct {
 	DeletedAt   *time.Time `json:"deleted_at,omitempty" db:"deleted_at"`
 	CreatedAt   time.Time  `json:"created_at" db:"created_at"`
 	UpdatedAt   time.Time  `json:"updated_at" db:"updated_at"`
-}
-
-type Client struct {
-	ID         int             `json:"id"`
-	Username   string          `json:"username"`
-	ChatID     int             `json:"chat_id"`
-	Connection *websocket.Conn `json:"-"`
-	Message    chan *Message   `json:"-"`
-	Send       chan []byte     `json:"-"`
-	Hub        *Hub            `json:"-"`
-	LastPing   time.Time       `json:"-"`
 }
 
 type ChatRequest struct {

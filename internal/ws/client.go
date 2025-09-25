@@ -17,6 +17,17 @@ const (
 	maxMessageQueue = 256
 )
 
+type Client struct {
+	ID         int             `json:"id"`
+	Username   string          `json:"username"`
+	ChatID     int             `json:"chat_id"`
+	Connection *websocket.Conn `json:"-"`
+	Message    chan *Message   `json:"-"`
+	Send       chan []byte     `json:"-"`
+	Hub        *Hub            `json:"-"`
+	LastPing   time.Time       `json:"-"`
+}
+
 func (c *Client) readPump() {
 	defer func() {
 		c.Hub.unregister <- c
