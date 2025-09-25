@@ -13,14 +13,12 @@ CREATE TABLE user_chat (
     UNIQUE(user_id, chat_id)
 );
 
--- Create indexes
 CREATE INDEX idx_user_chat_user_id ON user_chat(user_id);
 CREATE INDEX idx_user_chat_chat_id ON user_chat(chat_id);
 CREATE INDEX idx_user_chat_joined_at ON user_chat(joined_at);
 CREATE INDEX idx_user_chat_role ON user_chat(role);
 CREATE INDEX idx_user_chat_is_banned ON user_chat(is_banned);
 
--- Add trigger to update current_members count
 CREATE OR REPLACE FUNCTION update_chat_member_count()
 RETURNS TRIGGER AS $$
 BEGIN

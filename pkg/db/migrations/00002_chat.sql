@@ -13,13 +13,11 @@ CREATE TABLE chats (
     current_members INT DEFAULT 0
 );
 
--- Create indexes
 CREATE INDEX idx_chats_created_by ON chats(created_by);
 CREATE INDEX idx_chats_created_at ON chats(created_at);
 CREATE INDEX idx_chats_is_active ON chats(is_active);
 CREATE INDEX idx_chats_is_private ON chats(is_private);
 
--- Add constraints
 ALTER TABLE chats ADD CONSTRAINT check_name_length CHECK (length(name) >= 1 AND length(name) <= 100);
 ALTER TABLE chats ADD CONSTRAINT check_max_members CHECK (max_members > 0 AND max_members <= 1000);
 ALTER TABLE chats ADD CONSTRAINT check_current_members CHECK (current_members >= 0 AND current_members <= max_members);
