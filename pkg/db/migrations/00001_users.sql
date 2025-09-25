@@ -8,9 +8,7 @@ CREATE TABLE users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     last_seen TIMESTAMP WITH TIME ZONE,
-    is_active BOOLEAN DEFAULT true,
-    avatar_url TEXT,
-    bio TEXT
+    is_active BOOLEAN DEFAULT true
 );
 
 -- Create indexes for better performance

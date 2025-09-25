@@ -11,8 +11,6 @@ type User struct {
 	UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
 	LastSeen  *time.Time `json:"last_seen,omitempty" db:"last_seen"`
 	IsActive  bool       `json:"is_active" db:"is_active"`
-	AvatarURL *string    `json:"avatar_url,omitempty" db:"avatar_url"`
-	Bio       *string    `json:"bio,omitempty" db:"bio"`
 }
 
 type UserRegister struct {
@@ -60,7 +58,5 @@ func (u *User) ToResponse() UserResponse {
 		Username:  u.Username,
 		CreatedAt: u.CreatedAt,
 		LastSeen:  u.LastSeen,
-		AvatarURL: u.AvatarURL,
-		Bio:       u.Bio,
 	}
 }

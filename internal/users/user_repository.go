@@ -24,7 +24,7 @@ func (r *UserRepository) CreateUser(user User) (*User, error) {
 	query := `
 		INSERT INTO users (email, username, password_hash, created_at, updated_at, is_active)
 		VALUES ($1, $2, $3, $4, $5, $6)
-		RETURNING id, created_at, updated_at, last_seen, is_active, avatar_url, bio
+		RETURNING id, created_at, updated_at, last_seen, is_active
 	`
 
 	now := time.Now()
@@ -32,7 +32,7 @@ func (r *UserRepository) CreateUser(user User) (*User, error) {
 
 	err := row.Scan(
 		&user.ID, &user.CreatedAt, &user.UpdatedAt,
-		&user.LastSeen, &user.IsActive, &user.AvatarURL, &user.Bio,
+		&user.LastSeen, &user.IsActive,
 	)
 	if err != nil {
 		r.logger.WithError(err).Error("Failed to create user")
@@ -45,7 +45,7 @@ func (r *UserRepository) CreateUser(user User) (*User, error) {
 func (r *UserRepository) GetByEmail(email string) (*User, error) {
 	query := `
 		SELECT id, email, username, password_hash, created_at, updated_at, 
-		       last_seen, is_active, avatar_url, bio
+		       last_seen, is_active
 		FROM users 
 		WHERE email = $1 AND is_active = true
 	`
@@ -56,7 +56,7 @@ func (r *UserRepository) GetByEmail(email string) (*User, error) {
 	err := row.Scan(
 		&user.ID, &user.Email, &user.Username, &user.Password,
 		&user.CreatedAt, &user.UpdatedAt, &user.LastSeen,
-		&user.IsActive, &user.AvatarURL, &user.Bio,
+		&user.IsActive,
 	)
 
 	if err != nil {
@@ -73,7 +73,7 @@ func (r *UserRepository) GetByEmail(email string) (*User, error) {
 func (r *UserRepository) GetByID(id int) (*User, error) {
 	query := `
 		SELECT id, email, username, password_hash, created_at, updated_at, 
-		       last_seen, is_active, avatar_url, bio
+		       last_seen, is_active
 		FROM users 
 		WHERE id = $1 AND is_active = true
 	`
@@ -84,7 +84,7 @@ func (r *UserRepository) GetByID(id int) (*User, error) {
 	err := row.Scan(
 		&user.ID, &user.Email, &user.Username, &user.Password,
 		&user.CreatedAt, &user.UpdatedAt, &user.LastSeen,
-		&user.IsActive, &user.AvatarURL, &user.Bio,
+		&user.IsActive,
 	)
 
 	if err != nil {
@@ -101,7 +101,7 @@ func (r *UserRepository) GetByID(id int) (*User, error) {
 func (r *UserRepository) GetByUsername(username string) (*User, error) {
 	query := `
 		SELECT id, email, username, password_hash, created_at, updated_at, 
-		       last_seen, is_active, avatar_url, bio
+		       last_seen, is_active
 		FROM users 
 		WHERE username = $1 AND is_active = true
 	`
@@ -112,7 +112,7 @@ func (r *UserRepository) GetByUsername(username string) (*User, error) {
 	err := row.Scan(
 		&user.ID, &user.Email, &user.Username, &user.Password,
 		&user.CreatedAt, &user.UpdatedAt, &user.LastSeen,
-		&user.IsActive, &user.AvatarURL, &user.Bio,
+		&user.IsActive,
 	)
 
 	if err != nil {
@@ -134,18 +134,6 @@ func (r *UserRepository) UpdateUser(id int, update UserUpdate) (*User, error) {
 	if update.Username != nil {
 		setParts = append(setParts, fmt.Sprintf("username = $%d", argIndex))
 		args = append(args, *update.Username)
-		argIndex++
-	}
-
-	if update.AvatarURL != nil {
-		setParts = append(setParts, fmt.Sprintf("avatar_url = $%d", argIndex))
-		args = append(args, *update.AvatarURL)
-		argIndex++
-	}
-
-	if update.Bio != nil {
-		setParts = append(setParts, fmt.Sprintf("bio = $%d", argIndex))
-		args = append(args, *update.Bio)
 		argIndex++
 	}
 
@@ -172,7 +160,7 @@ func (r *UserRepository) UpdateUser(id int, update UserUpdate) (*User, error) {
 		SET %s 
 		WHERE id = $%d AND is_active = true
 		RETURNING id, email, username, password_hash, created_at, updated_at, 
-		          last_seen, is_active, avatar_url, bio
+		          last_seen, is_active
 	`, setClause, argIndex)
 
 	user := &User{}
@@ -181,7 +169,7 @@ func (r *UserRepository) UpdateUser(id int, update UserUpdate) (*User, error) {
 	err := row.Scan(
 		&user.ID, &user.Email, &user.Username, &user.Password,
 		&user.CreatedAt, &user.UpdatedAt, &user.LastSeen,
-		&user.IsActive, &user.AvatarURL, &user.Bio,
+		&user.IsActive,
 	)
 
 	if err != nil {
